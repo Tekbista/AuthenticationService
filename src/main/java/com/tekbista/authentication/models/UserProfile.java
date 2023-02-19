@@ -1,6 +1,6 @@
 package com.tekbista.authentication.models;
 
-import com.tekbista.authentication.entities.State;
+import com.tekbista.authentication.entities.Address;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +15,7 @@ public class UserProfile {
 
 	private String firstName;
 	private String lastName;
-	private String address1;
-	private String address2;
-	private String city;
-	private State state;
-	private String zipCode;
+	private Address address;
 	private String phone;
 
 	

@@ -23,15 +23,22 @@ public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long addressId;
+	
 	@NotEmpty
 	@Size(min = 2, max = 100)
-	private String street;
+	private String address1;
+	
+	@Size(min = 2, max = 100)
+	private String address2;
+	
 	@NotEmpty
 	@Size(min = 2, max = 100)
 	private String city;
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "state_id")
 	private State state;
+	
 	@NotEmpty
 	@Size(min = 2, max = 100)
 	private String zipCode;

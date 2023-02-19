@@ -34,7 +34,7 @@ import com.tekbista.authentication.security.JwtTokenHelper;
 import com.tekbista.authentication.services.UserService;
 
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = "application/json")
 public class AuthController {
@@ -135,6 +135,16 @@ public class AuthController {
 		 
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
+	
+	
+	@PostMapping("/updateUserProfile")
+	public ResponseEntity<UserProfile> updateUserProfile(HttpServletRequest request, @RequestBody UserProfile userProfile){
+		String token = request.getHeader("Authorization");
+		UserProfile profile = userService.updateUserProfile(token, userProfile);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(profile);
+	}
+	
 	
 	@GetMapping("/getStates")
 	public ResponseEntity<List<State>> getAllStates(){

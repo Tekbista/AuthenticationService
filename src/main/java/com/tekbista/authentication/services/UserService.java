@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.tekbista.authentication.entities.Address;
 import com.tekbista.authentication.entities.State;
 import com.tekbista.authentication.entities.User;
 import com.tekbista.authentication.events.ForgetPasswordEvent;
@@ -142,11 +143,8 @@ public class UserService implements IUserService {
 			user = userRepository.findByEmail(jwtTokenHelper.getUsernameFromToken(jwtToken));
 			userProfile.setFirstName(user.getFirstName());
 			userProfile.setLastName(user.getLastName());
-			userProfile.setAddress1(user.getAddress().getStreet());
-			userProfile.setCity(user.getAddress().getCity());
-			userProfile.setState(user.getAddress().getState());
-			userProfile.setZipCode(user.getAddress().getZipCode());
-			userProfile.setPhone("(xxx)-xxx-xxxx");
+			userProfile.setAddress(user.getAddress());
+			userProfile.setPhone(user.getPhone());
 		}
 		
 		return userProfile;
@@ -157,6 +155,29 @@ public class UserService implements IUserService {
 	@Override
 	public List<State> getAllStates() {
 		return stateRepository.findAll();
+	}
+
+
+
+	@Override
+	public UserProfile updateUserProfile(String token, UserProfile profile) {
+		
+		User user = new User();
+		UserProfile userProfile = new UserProfile();
+		if(token != null && !token.isEmpty() && token.startsWith("Bearer ")) {
+			String jwtToken = token.substring(7);
+			user = userRepository.findByEmail(jwtTokenHelper.getUsernameFromToken(jwtToken));
+			user.setAddress(profile.getAddress());
+			user.setPhone(profile.getPhone());
+			user = userRepository.save(user);
+			
+			userProfile.setFirstName(user.getFirstName());
+			userProfile.setLastName(user.getLastName());
+			userProfile.setAddress(user.getAddress());
+			userProfile.setPhone(user.getPhone());
+		}
+		
+		return userProfile;
 	}
 
 }

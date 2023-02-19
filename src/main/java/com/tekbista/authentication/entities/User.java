@@ -19,7 +19,6 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,18 +34,23 @@ public class User implements UserDetails{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	@NotEmpty
 	@Size(min = 2, max = 100)
 	private String firstName;
+	
 	@NotEmpty
 	@Size(min = 2, max = 100)
 	private String lastName;
+	
 	@NotEmpty
 	@Email
 	private String email;
+	
 	@NotEmpty
 	@Size(min = 8, max = 200)
 	private String password;
+	
 	private boolean enabled = false;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -59,6 +63,10 @@ public class User implements UserDetails{
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_id", referencedColumnName = "addressId")
 	private Address address;
+	
+	@NotEmpty
+	@Size(min = 10, max = 10)
+	private String phone;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

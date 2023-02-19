@@ -18,6 +18,7 @@ public interface IUserService {
 	boolean resetPassword( ResetPasswordRequest passwordRequest, String token);
 	boolean isUserLoggedIn(String token);
 	UserProfile getUserDetails(String token);
+	UserProfile updateUserProfile(String token, UserProfile profile);
 	List<State> getAllStates();
 	
 }
