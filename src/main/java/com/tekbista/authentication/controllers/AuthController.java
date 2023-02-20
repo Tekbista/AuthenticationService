@@ -140,9 +140,11 @@ public class AuthController {
 	@PostMapping("/updateUserProfile")
 	public ResponseEntity<UserProfile> updateUserProfile(HttpServletRequest request, @RequestBody UserProfile userProfile){
 		String token = request.getHeader("Authorization");
-		UserProfile profile = userService.updateUserProfile(token, userProfile);
+		UserProfile profile = new UserProfile();
+		profile = userService.updateUserProfile(token, userProfile);
+		if(profile != null) return ResponseEntity.status(HttpStatus.OK).body(profile);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(profile);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(profile);
 	}
 	
 	
