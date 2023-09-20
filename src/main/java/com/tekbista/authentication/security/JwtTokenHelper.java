@@ -10,8 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 
 @Component
 public class JwtTokenHelper {
@@ -41,14 +44,14 @@ public class JwtTokenHelper {
 	}
 
 
-	private Claims getAllClaimsFromToken(String token) {
+	private Claims getAllClaimsFromToken(String token) throws ExpiredJwtException, MalformedJwtException{
 		
 		return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
 	}
 	
 	
 	// Check if the token has expired
-	private Boolean isTokenExpired(String token) {
+	Boolean isTokenExpired(String token) {
 		final Date expiration = getExiprationDateFromToken(token);
 		return expiration.before(new Date());
 	}
@@ -77,6 +80,7 @@ public class JwtTokenHelper {
 	
 	// Validate token
 	public Boolean validateToken(String token, UserDetails userDetails) {
+		
 		final String username = getUsernameFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}

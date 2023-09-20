@@ -11,8 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 
 @RestControllerAdvice
 public class GolbalExceptionHandler {
@@ -47,9 +47,14 @@ public class GolbalExceptionHandler {
 		return new ResponseEntity<String>( ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
+	@ExceptionHandler(MalformedJwtException.class)
+	public ResponseEntity<String> handleMalformedJwtException(MalformedJwtException ex){
+		return new ResponseEntity<String>( ex.getMessage(), HttpStatus.FORBIDDEN);
+	}
+	
 	@ExceptionHandler(ExpiredJwtException.class)
 	public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex){
-		return new ResponseEntity<String>( ex.getMessage(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<String>( ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
 	
 	@ExceptionHandler(BadCredentialsException.class)

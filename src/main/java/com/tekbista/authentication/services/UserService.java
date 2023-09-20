@@ -9,12 +9,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tekbista.authentication.entities.Address;
 import com.tekbista.authentication.entities.State;
 import com.tekbista.authentication.entities.User;
 import com.tekbista.authentication.events.ForgetPasswordEvent;
 import com.tekbista.authentication.events.PasswordResetSuccessEvent;
-import com.tekbista.authentication.events.RegistrationCompleteEvent;
+import com.tekbista.authentication.models.EmailDetails;
 import com.tekbista.authentication.models.ResetPasswordRequest;
 import com.tekbista.authentication.models.UserProfile;
 import com.tekbista.authentication.repositories.StateRepository;
@@ -42,6 +41,9 @@ public class UserService implements IUserService {
 	@Autowired
 	private JwtTokenHelper jwtTokenHelper;
 	
+	@Autowired
+	private KafkaProducerService producerService;
+	
 	@Override
 	public User registerUser(User user, String url) {
 		
@@ -53,7 +55,21 @@ public class UserService implements IUserService {
 		user.setPassword(hashPassword);
 		
 		if(userRepository.save(user) != null) {
-			publisher.publishEvent(new RegistrationCompleteEvent(user, url));
+//			publisher.publishEvent(new RegistrationCompleteEvent(user, url));
+			String token = jwtTokenHelper.generateToken(user);
+			
+			url = url + "/api/v1/auth/verifyRegistration?token=" + token;		
+			
+			// Send verification email
+			EmailDetails emailDetails = new EmailDetails();
+			emailDetails.setRecipient(user.getEmail());
+			emailDetails.setMsgBody(
+					"<h3>Registration Success</h3>" +
+					"Please click the link below to verify your registration. " + url 
+					);
+			emailDetails.setSubject("Registration Success");
+			producerService.sendSignupMessage(emailDetails);
+			
 			return user;
 		}else {
 			return null;
@@ -83,6 +99,7 @@ public class UserService implements IUserService {
 		
 	}
 
+	
 	@Override
 	public void forgetPassword(String email, String url) {
 		
@@ -114,6 +131,7 @@ public class UserService implements IUserService {
 		
 	}
 
+	
 	@Override
 	public boolean existByEmail(String email) {
 		 return userRepository.existsByEmail(email);

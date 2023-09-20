@@ -26,10 +26,8 @@ public class Address {
 	
 	@NotEmpty
 	@Size(min = 2, max = 100)
-	private String address1;
+	private String street;
 	
-	@Size(min = 2, max = 100)
-	private String address2;
 	
 	@NotEmpty
 	@Size(min = 2, max = 100)
